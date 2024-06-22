@@ -1,3 +1,10 @@
+class ViewCustomize
+  @dev_mode = (ENV['REDMINE_DEV'] =~ /(true|True|TRUE)/)
+  def self.is_dev
+    return @dev_mode
+  end
+end
+
 Redmine::Plugin.register :view_customize do
   requires_redmine :version_or_higher => '3.1.0'
   name 'View Customize plugin'
@@ -7,11 +14,13 @@ Redmine::Plugin.register :view_customize do
   url 'https://github.com/onozaty/redmine-view-customize'
   author_url 'https://github.com/onozaty'
 
+  if ViewCustomize.is_dev
   menu :admin_menu, :view_customizes,
     { :controller => 'view_customizes', :action => 'index' },
     :caption => :label_view_customize,
     :html => { :class => 'icon icon-view_customize'},
     :if => Proc.new { User.current.admin? }
+  end
 
   settings :default => { 'create_api_access_key' => '' }, :partial => 'settings/view_customize_settings'
 
